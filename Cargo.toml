@@ -1,0 +1,19 @@
+[package]
+name = "silica-demo-stm32f207"
+version = "0.0.1"
+authors = ["ithinuel@gmail.com"]
+description = ""
+
+documentation = ""
+homepage = ""
+repository = ""
+
+readme = "Readme.md"
+
+keywords = ["baremetal", "OS"]
+
+license = "MIT"
+
+[dependencies]
+silica = { path = "../silica" }
+silica-olimex-p207 = { path = "../silica-olimex-p207" }
