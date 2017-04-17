@@ -7,7 +7,7 @@ MEMORY
 panic_str_size = 512;
 stack_size = 1024;
 
-INCLUDE linker/cm3.ld
+/* INCLUDE linker/cm3.ld */
 
 SECTIONS
 {
@@ -22,19 +22,26 @@ SECTIONS
   } > FLASH
   .rodata : {
     *(.rodata*)
-    idata_load_start = .;
+    idata_from = .;
   } > FLASH
 
   .panic_fmt ORIGIN(RAM) : {
     . = ALIGN(. + panic_str_size, 4);
   } > RAM
 
-  .data : AT(idata_load_start) {
+  .data : AT(idata_from) {
+    idata_to = .;
     *(.data*)
   } > RAM
-  data_size = SIZEOF(.data);
+  idata_size = SIZEOF(.data);
 
-  heap_size = LENGTH(RAM) - data_size - panic_str_size - stack_size;
+  .bss : {
+    bss_start = .;
+    *(.bss*)
+  } > RAM
+  bss_size = SIZEOF(.bss);
+
+  heap_size = LENGTH(RAM) - idata_size - panic_str_size - stack_size - bss_size;
   .heap : {
     heap_start = .;
     . = . + heap_size;

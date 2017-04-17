@@ -1,5 +1,5 @@
 [package]
-name = "silica-demo-stm32f207"
+name = "silica-olimex-p207-demo"
 version = "0.0.1"
 authors = ["ithinuel@gmail.com"]
 description = ""
@@ -13,6 +13,8 @@ readme = "Readme.md"
 keywords = ["baremetal", "OS"]
 
 license = "MIT"
+
+build="build.rs"
 
 [dependencies]
 silica = { path = "../silica" }

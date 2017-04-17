@@ -1,5 +1,5 @@
 [root]
-name = "silica-demo-stm32f207"
+name = "silica-olimex-p207-demo"
 version = "0.0.1"
 dependencies = [
  "silica 0.0.1",
@@ -9,21 +9,7 @@ dependencies = [
 [[package]]
 name = "compiler_builtins"
 version = "0.1.0"
-source = "git+https://github.com/rust-lang-nursery/compiler-builtins.git#8bb7795459945a75827d7d075f64d085d99a9745"
-dependencies = [
- "gcc 0.3.38 (registry+https://github.com/rust-lang/crates.io-index)",
- "rustc-cfg 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "gcc"
-version = "0.3.38"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-
-[[package]]
-name = "rustc-cfg"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
+source = "git+https://github.com/rust-lang-nursery/compiler-builtins.git?branch=auto#280d19f1127aa80739f4179152b11a5f7d36d79f"
 
 [[package]]
 name = "silica"
@@ -37,7 +23,6 @@ dependencies = [
 name = "silica-allocator"
 version = "0.1.0"
 dependencies = [
- "compiler_builtins 0.1.0 (git+https://github.com/rust-lang-nursery/compiler-builtins.git)",
  "silica-chunks 0.1.0",
 ]
 
@@ -46,7 +31,7 @@ name = "silica-chunks"
 version = "0.1.0"
 
 [[package]]
-name = "silica-cortexm"
+name = "silica-cortexm3"
 version = "0.1.0"
 
 [[package]]
@@ -54,6 +39,7 @@ name = "silica-olimex-p207"
 version = "0.1.0"
 dependencies = [
  "silica-stm32f207 0.1.0",
+ "silica-stm32f2xx 0.1.0",
 ]
 
 [[package]]
@@ -71,12 +57,10 @@ dependencies = [
 name = "silica-stm32f2xx"
 version = "0.1.0"
 dependencies = [
- "compiler_builtins 0.1.0 (git+https://github.com/rust-lang-nursery/compiler-builtins.git)",
+ "compiler_builtins 0.1.0 (git+https://github.com/rust-lang-nursery/compiler-builtins.git?branch=auto)",
  "silica 0.0.1",
- "silica-cortexm 0.1.0",
+ "silica-cortexm3 0.1.0",
 ]
 
 [metadata]
-"checksum compiler_builtins 0.1.0 (git+https://github.com/rust-lang-nursery/compiler-builtins.git)" = "<none>"
-"checksum gcc 0.3.38 (registry+https://github.com/rust-lang/crates.io-index)" = "553f11439bdefe755bf366b264820f1da70f3aaf3924e594b886beb9c831bcf5"
-"checksum rustc-cfg 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "37937dfed502ccc4e644c3cc272222e31adc2b1f5d215f6f8f8e1a422072e516"
+"checksum compiler_builtins 0.1.0 (git+https://github.com/rust-lang-nursery/compiler-builtins.git?branch=auto)" = "<none>"

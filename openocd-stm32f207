@@ -1,0 +1,8 @@
+source [find interface/ftdi/olimex-arm-usb-ocd-h.cfg]
+
+# increase working area to 32KB for faster flash programming
+set WORKAREASIZE 0x8000
+
+source [find target/stm32f2x.cfg]
+
+init
