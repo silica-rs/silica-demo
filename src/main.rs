@@ -1,14 +1,68 @@
-#![feature(lang_items)]
+//#![feature(lang_items)]
 #![feature(alloc)]
 
 #![no_main]
 #![no_std]
 
-#![allow(dead_code)]
-
+#[cfg(feature = "olimex-p207")]
 extern crate silica_olimex_p207; // board specific
+
+#[cfg(feature = "arduino-uno")]
+extern crate silica_arduino_uno;
+
+#[cfg(feature = "arduino-mega")]
+extern crate silica_arduino_mega;
+
 extern crate silica;    // generic code
 extern crate alloc;     // even more generic code
+
+#[cfg(feature = "olimex-p207")]
+mod olimex_p207 {
+    use silica_olimex_p207;
+    use silica_olimex_p207::gpio::Out;
+    pub fn get_leds() -> (Out<'static>, Out<'static>) {
+        (
+            Out::from(&silica_olimex_p207::STAT1_E).unwrap(),
+            Out::from(&silica_olimex_p207::STAT2_E).unwrap()
+        )
+    }
+    pub fn lowlevel_init() -> Result<u32, &'static str> {
+        silica_olimex_p207::init()
+    }
+}
+
+#[cfg(feature = "arduino-uno")]
+mod arduino_uno {
+    struct Pin {
+    }
+    pub fn get_leds<'a>() -> (Pin, Pin) {
+        Serial {}
+    }
+    pub fn lowlevel_init() -> Result<u32, &'static str> {
+        Ok(0)
+    }
+}
+
+#[cfg(feature = "arduino-mega")]
+mod arduino_mega {
+    struct Pin {
+    }
+    pub fn get_leds<'a>() -> (Pin, Pin) {
+        Serial {}
+    }
+    pub fn lowlevel_init() -> Result<u32, &'static str> {
+        Ok(0)
+    }
+}
+
+#[cfg(feature = "olimex-p207")]
+use olimex_p207::*;
+
+#[cfg(feature = "arduino-uno")]
+use arduino_uno::*;
+
+#[cfg(feature = "arduino-mega")]
+use arduino_mega::*;
 
 /**
  * board features :
@@ -21,7 +75,7 @@ extern crate alloc;     // even more generic code
 #[no_mangle]
 pub fn main() {
     // board init : speed up clock etc
-    let lowlevel_status = if let Err(msg) = silica_olimex_p207::init() {
+    let lowlevel_status = if let Err(msg) = lowlevel_init() {
         msg
     } else {
         &"Ok"
@@ -30,16 +84,10 @@ pub fn main() {
     // os init : initialize memory manager
     silica::alloc::init();
 
-    use silica_olimex_p207::Peripheral;
     use silica::peripheral::gpio::Output;
-    use silica_olimex_p207::gpio::*;
     let _ = lowlevel_status;
     let mut state = true;
-    silica_olimex_p207::STAT1_E.init();
-    silica_olimex_p207::STAT2_E.init();
-
-    let mut stat1 = Out::from(&silica_olimex_p207::STAT1_E);
-    let mut stat2 = Out::from(&silica_olimex_p207::STAT2_E);
+    let (mut stat1, mut stat2) = get_leds();
     loop {
         stat1.write(state);
         stat2.write(state);
@@ -50,28 +98,4 @@ pub fn main() {
             cnt -= 1;
         }
     }
-/*
-    use silica::peripheral::serial::{Serial as ISerial, BitCount, StopBit, Parity};
-    use silica::io::Write;
-    use silica::io::Read;
-    use silica_olimex_p207::usart::*;
-    // app init
-    let mut ext = Serial::from(&silica_olimex_p207::RS232_1);
-    if let Err(ref err) = ext.setup(115200, BitCount::EightBits, Parity::None, StopBit::OneBit) {
-        panic!("{:?}", err);
-    }
-
-    if let Err(ref err) = ext.write(lowlevel_status.as_bytes()) {
-        panic!("{:?}", err);
-    }
-
-    let mut buffer = [0; 128];
-    loop {
-        let _ = ext.read(&mut buffer);
-        let _ = ext.write(&buffer);
-    }
-    // app launch
-    // let mut t = silica::thread::Thread::new(Box::new(|| { loop {} }), "testmethod", 128, silica::thread::ThreadPriority::Lowest);
-    // t.start().join(Duration::from(0u64));
-    */
 }

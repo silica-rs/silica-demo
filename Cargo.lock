@@ -1,8 +1,10 @@
 [root]
-name = "silica-olimex-p207-demo"
+name = "silica-demo"
 version = "0.0.1"
 dependencies = [
  "silica 0.0.1",
+ "silica-arduino-mega2560 0.1.0",
+ "silica-arduino-uno 0.1.0",
  "silica-olimex-p207 0.1.0",
 ]
 
@@ -25,6 +27,14 @@ version = "0.1.0"
 dependencies = [
  "silica-chunks 0.1.0",
 ]
+
+[[package]]
+name = "silica-arduino-mega2560"
+version = "0.1.0"
+
+[[package]]
+name = "silica-arduino-uno"
+version = "0.1.0"
 
 [[package]]
 name = "silica-chunks"

@@ -1,5 +1,5 @@
 [package]
-name = "silica-olimex-p207-demo"
+name = "silica-demo"
 version = "0.0.1"
 authors = ["ithinuel@gmail.com"]
 description = ""
@@ -10,12 +10,20 @@ repository = ""
 
 readme = "Readme.md"
 
-keywords = ["baremetal", "OS"]
+keywords = ["baremetal", "OS", "arduino-uno", "stm32"]
 
 license = "MIT"
 
 build="build.rs"
 
+[features]
+default=[]
+olimex-p207 = ['silica-olimex-p207']
+arduino-uno = ['silica-arduino-uno']
+arduino-mega2560 = ['silica-arduino-mega2560']
+
 [dependencies]
 silica = { path = "../silica" }
-silica-olimex-p207 = { path = "../silica-olimex-p207" }
+silica-olimex-p207 = { path = "../silica-olimex-p207", optional = true }
+silica-arduino-uno = { path = "../silica-arduino-uno", optional = true }
+silica-arduino-mega2560 = { path = "../silica-arduino-mega2560", optional = true }
