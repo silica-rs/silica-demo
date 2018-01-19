@@ -24,9 +24,6 @@ dependencies = [
 [[package]]
 name = "silica-allocator"
 version = "0.1.0"
-dependencies = [
- "silica-chunks 0.1.0",
-]
 
 [[package]]
 name = "silica-arduino-mega2560"
@@ -34,10 +31,6 @@ version = "0.1.0"
 
 [[package]]
 name = "silica-arduino-uno"
-version = "0.1.0"
-
-[[package]]
-name = "silica-chunks"
 version = "0.1.0"
 
 [[package]]

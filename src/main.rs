@@ -1,5 +1,6 @@
 //#![feature(lang_items)]
 #![feature(alloc)]
+#![feature(collections)]
 
 #![no_main]
 #![no_std]
@@ -16,15 +17,16 @@ extern crate silica_arduino_mega;
 extern crate silica;    // generic code
 extern crate alloc;     // even more generic code
 
+#[macro_use]
+extern crate collections;
+
 #[cfg(feature = "olimex-p207")]
 mod olimex_p207 {
     use silica_olimex_p207;
-    use silica_olimex_p207::gpio::Out;
-    pub fn get_leds() -> (Out<'static>, Out<'static>) {
-        (
-            Out::from(&silica_olimex_p207::STAT1_E).unwrap(),
-            Out::from(&silica_olimex_p207::STAT2_E).unwrap()
-        )
+    use silica_olimex_p207::usart::Serial;
+    use collections::String;
+    pub fn get_serial() -> Result<Serial<'static>, String> {
+        Serial::from(&silica_olimex_p207::RS232_1)
     }
     pub fn lowlevel_init() -> Result<u32, &'static str> {
         silica_olimex_p207::init()
@@ -36,7 +38,7 @@ mod arduino_uno {
     struct Pin {
     }
     pub fn get_leds<'a>() -> (Pin, Pin) {
-        Serial {}
+        Pin {}
     }
     pub fn lowlevel_init() -> Result<u32, &'static str> {
         Ok(0)
@@ -48,7 +50,7 @@ mod arduino_mega {
     struct Pin {
     }
     pub fn get_leds<'a>() -> (Pin, Pin) {
-        Serial {}
+        Pin {}
     }
     pub fn lowlevel_init() -> Result<u32, &'static str> {
         Ok(0)
@@ -66,10 +68,7 @@ use arduino_mega::*;
 
 /**
  * board features :
- * STAT1_E : PF6
- * STAT2_E : PF7 (CAN_CTRL)
- * STAT3_E : PF8 (CS_UEXT)
- * STAT4_E : PF9 (CAM_PWR)
+ * RS232_1
  */
 
 #[no_mangle]
@@ -84,18 +83,37 @@ pub fn main() {
     // os init : initialize memory manager
     silica::alloc::init();
 
-    use silica::peripheral::gpio::Output;
-    let _ = lowlevel_status;
-    let mut state = true;
-    let (mut stat1, mut stat2) = get_leds();
-    loop {
-        stat1.write(state);
-        stat2.write(state);
-        state = !state;
+    use silica::peripheral::serial::*;
+    use silica::io::Read;
+    use silica::io::Write;
 
-        let mut cnt = 0xFFFFFF;
-        while cnt > 0 {
-            cnt -= 1;
+    let _ = lowlevel_status;
+    let mut serial = get_serial().unwrap();
+    let _ = serial.open(9600, BitCount::EightBits, Parity::Even, StopBit::OneBit);
+
+    let mut buf = vec![0; 512];
+    serial.write(b"Hello world !\r\ncomment allez vous par ici, c'est un message assez long quand meme dit-donc !\r\n");
+    let tout_reload = 100000usize;
+    let mut timeout = tout_reload;
+    let mut read = 0;
+    loop {
+        read += match serial.read(&mut buf[read..]) {
+            Ok(n) => {
+                if n == 0 {
+                    timeout = timeout.saturating_sub(1);
+                } else {
+                    timeout = tout_reload;
+                }
+                n
+            },
+            Err(msg) => {
+                //let _ = serial.write(msg.as_bytes());
+                0
+            }
+        };
+        if (timeout == 0) && (read > 0) {
+            serial.write(&buf[..read]).unwrap();
+            read = 0;
         }
     }
 }

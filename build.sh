@@ -54,10 +54,9 @@ else
 	rustup default nightly-x86_64-unknown-linux-gnu
 fi
 
-
 #set -x
 
-RUST_TARGET_PATH=.. xargo build --target $TARGET $FEATURES $ARG
+RUST_TARGET_PATH=. xargo build --target $TARGET $FEATURES $ARG
 
 if [[ $? -eq 0 ]]; then
   arm-none-eabi-objcopy target/$TARGET/$MODE/$NAME -O binary target/$TARGET/$MODE/$NAME.bin
